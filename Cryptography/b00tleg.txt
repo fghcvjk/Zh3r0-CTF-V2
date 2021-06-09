@@ -1,0 +1,20 @@
+ b00tleg
+775
+Source? Gotta comply to Indian CTFs' crypto standards
+
+nc crypto.zh3r0.cf 1111
+
+Author - deuterium
+
+root@ubuntu:~# nc crypto.zh3r0.cf 1111
+Welcome to your basic cryptanalysis tutorial
+There would be 8 levels, each level bringing something new on
+the plate. I would be generous enough to let you encrypt any
+string of your choice. Once you figure out the encryption,
+submit the flag to proceed to the next level.
+
+Level: 1, encrypted flag: 69666d6d70217870736d6522214d667574216866752168706a6f68
+
+[1] Encrypt
+[2] Submit level flag
+>>> 

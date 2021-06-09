@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<title>Hell</title>
+<link href="Hell_files/css.css" rel="stylesheet"><link href="Hell_files/css_003.css" rel="stylesheet"><link href="Hell_files/css_002.css" rel="stylesheet"><link rel="icon" type="image/png" href="https://asmg.zh3r0.cf/assets/favicon.png"><link href="Hell_files/main.css" rel="stylesheet"><script src="Hell_files/phaser.js"></script><script type="text/javascript" src="Hell_files/factory.js"></script><script type="text/javascript">var doshell_obj={files:[],dos_lines:[],dos_text:[],NO_LINES:16,MAX_CHARS:50,USR_PREFIX:'>: ',buffer:'',CURSOR_CONST:'|',CURSOR_INTERVAL:400,error_functions:{args_count:function(command_name){doshell_obj.push_lines("incorrect number of arguments for '"+command_name.toUpperCase()+"'");},not_number:function(str){doshell_obj.push_lines("'"+str.toUpperCase()+"' is not a number");},custom:function(str){doshell_obj.push_lines(str);}},command_functions:{help:function(args){if(args.length==1)
+doshell_obj.push_lines(doshell_obj.HELP_MSG);else
+doshell_obj.error_functions.args_count(args[0]);},flag:function(args){if(args.length==1){doshell_obj.push_lines(doshell_obj.SOLUT_MSG);window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ",'_blank');}
+else
+doshell_obj.error_functions.args_count(args[0]);},man:function(args){if(args.length!=1)
+doshell_obj.error_functions.args_count(args[0]);else{doshell_obj.push_lines(doshell_obj.MAN_MSG);window.open("https://del.dog/asm-hell.txt",'_blank');}},progr:function(args){if(args.length==1)
+doshell_obj.push_lines(score_obj.get_progress());else
+doshell_obj.error_functions.args_count(args[0]);},start:function(args){if(args.length!=2)
+doshell_obj.error_functions.args_count(args[0]);else if(!args[1].match(/^[0-9]+$/))
+doshell_obj.error_functions.not_number(args[1]);else if(parseInt(args[1])<0||parseInt(args[1])>=levels_obj.levels.length)
+doshell_obj.error_functions.custom("'"+args[1]+"' should be between 0 and "+(levels_obj.levels.length-1));else if(!score_obj.levels[args[1]].unlocked)
+doshell_obj.error_functions.custom("level "+args[1]+" hasn't been unlocked yet");else{game.state.start('game_scene');game_scene_obj.cur_level=parseInt(args[1]);doshell_obj.cursor_timer.stop(false);}}},HELP_MSG:'You\'re trapped 13 layers deep in hell. You have to master\n'+
+'assembly in order to get out alive. \n'+
+'Welcome to Shell, version 5.9.12 (x13_37-torus) \n'+
+'available commands: \n'+
+'- HELP    (show this help) \n'+
+'- START n (start level n; first level is 0) \n'+
+'- PROGR   (show game progress and available levels)\n'+
+'- MAN     (manual; redundant,\n'+
+'           as everything is explained in-game)',SOLUT_MSG:'In ASM culture, this is considered cheating',MAN_MSG:'https://del.dog/asm-hell.txt',};doshell_obj.create=function(){this.dos_text=[];this.dos_lines=[];for(let i=0;i<this.NO_LINES;i++){this.dos_text.push(factory_obj.create_text(game,20,10+30*i,'',STYLES.dos_text));this.dos_lines.push('');}
+this.push_lines(doshell_obj.HELP_MSG+'\n\n'+doshell_obj.USR_PREFIX);game.input.keyboard.onPressCallback=function(key,ev){doshell_obj.hide_cursor();doshell_obj.cursor_timer.stop(false);doshell_obj.cursor_timer.start();if(key.match(/^[A-Za-z0-9/ ]+$/)){doshell_obj.push_key(key.toUpperCase());}else if(game.input.keyboard.justPressed(Phaser.Keyboard.ENTER)){doshell_obj.process(doshell_obj.buffer.toLowerCase());doshell_obj.push_lines(doshell_obj.USR_PREFIX)
+doshell_obj.buffer='';}};doshell_obj.backspace_key=game.input.keyboard.addKey(Phaser.Keyboard.BACKSPACE);game.input.keyboard.onDownCallback=function(ev){if(ev.key=='Backspace'&&doshell_obj.backspace_key.justPressed()){doshell_obj.hide_cursor();doshell_obj.cursor_timer.stop(false);doshell_obj.cursor_timer.start();doshell_obj.pop_key();}}
+this.cursor_timer=game.time.create(false);this.cursor_timer.loop(this.CURSOR_INTERVAL,this.switch_cursor,this);this.cursor_timer.start();}
+doshell_obj.hide_cursor=function(){if(doshell_obj.buffer[doshell_obj.buffer.length-1]==doshell_obj.CURSOR_CONST){doshell_obj.buffer=doshell_obj.buffer.slice(0,-1);doshell_obj.redraw_buffer();}}
+doshell_obj.switch_cursor=function(){if(doshell_obj.buffer[doshell_obj.buffer.length-1]==doshell_obj.CURSOR_CONST)
+doshell_obj.buffer=doshell_obj.buffer.slice(0,-1);else
+doshell_obj.buffer+=doshell_obj.CURSOR_CONST;doshell_obj.redraw_buffer();}
+doshell_obj.process=function(command){let parts=command.split(' ');let rem=[];for(let i in parts){if(parts[i]!='')
+rem.push(parts[i]);}
+if(rem.length==0)
+return;if(!this.command_functions.hasOwnProperty(rem[0])){this.push_lines("command '"+rem[0].toUpperCase()+"' not found");return;}
+(this.command_functions[rem[0]])(rem);}
+doshell_obj.push_lines=function(text){let text_lns=text.split('\n');for(let i in text_lns){this.dos_lines.push(text_lns[i]);this.dos_lines.shift();}
+this.redraw();}
+doshell_obj.push_key=function(key){if(this.buffer.length<=this.MAX_CHARS){this.buffer+=key;this.redraw_buffer();}else{}}
+doshell_obj.pop_key=function(key){if(this.buffer.length>0){this.buffer=this.buffer.slice(0,-1);this.redraw_buffer();}else{beep(0);}}
+doshell_obj.redraw_buffer=function(){doshell_obj.dos_lines[doshell_obj.NO_LINES-1]=doshell_obj.USR_PREFIX+doshell_obj.buffer;doshell_obj.dos_text[doshell_obj.NO_LINES-1].text=doshell_obj.USR_PREFIX+doshell_obj.buffer;}
+doshell_obj.redraw=function(text){for(let i=0;i<this.NO_LINES;i++){this.dos_text[i].text=this.dos_lines[i];}}</script><script type="text/javascript">var factory_obj={create_text:function(owner,posX,posY,text,font){let tmp=owner.add.text(posX,posY,text,font);tmp.scale.x=0.7;tmp.scale.y=0.5;tmp.smoothed=true;return tmp;}}
+function max(a,b){return a>b?a:b;}
+function min(a,b){return a<b?a:b;}
+function abs(a){return a>0?a:-a;}
+String.prototype.replaceAt=function(index,replacement){return this.substr(0,index)+replacement+this.substr(index+replacement.length);}
+function beep(type){if(type==0){console.log('invalid keyboard operation BEEP');}}
+function isPrime(num){for(var i=2;i<num;i++)
+if(num%i===0)return false;return num!==1;}
+function getRandomInt(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+var GAME_MAX_INT=99;function getRandomIntGame(){return getRandomInt(0,GAME_MAX_INT);}
+function pad(num,size){var s=num+"";while(s.length<size)s="0"+s;return s;}
+function padEmptyLines(cur,total,width){str="";while(str.length<width)
+str+=" ";while(cur.length<total){cur.push(str);}
+return cur;}
+function allEmpty(cur){for(i=0;i<cur.length;i++){if(cur[i].replace(/\s/g,'').length!=0)
+return false;}
+return true;}
+function exportLevelSolution(level){arr=score_obj.levels[level].solution;console.log(arr.join("\n"));}</script><script type="text/javascript">function is_alpha(letter){return letter.match(/^[A-Z]+$/);}
+function is_num(letter){return letter.match(/^[0-9/-]+$/)&&parseInt(letter)<=99&&parseInt(letter)>=-99;}
+function is_mem_ptr(str){return str.match(/^\[[0-7]\]$/)!=null;}
+function is_double_mem_ptr(str){return str.match(/^\[\[[0-7]\]\]$/)!=null;}
+cpu_obj={cur_line:0,asm_code:[],registers:[0,0,0,0,0,0,0,0],wait_cycles:0,WAIT_INTERVAL:1000,WAIT_INTERVAL_FAST:100,WAIT_INTERVAL_SLOW:1000,WAIT_INTERVAL_ULTRA_FAST:80,job_list:[],halt:false,cycles:0,cycles_sum:0,repeat_timer:null,};cpu_obj.VALIDATION_MSG={'LINE':function(line){return "line "+(line+1).toString()+": ";},'UNKNOWN_CMD':function(line,command){return "unknown command '"+command+"'";},'BAD_ARGS':function(line,command,args,arg_type){return "bad arguments for '"+command+"' \n("+(args.length==0?'no arguments given':("type of '"+args+"' is '"+arg_type+"'"))+")";},'INV_ARGS':function(line,args){return "invalid arguments '"+args+"'";},};cpu_obj.validation_err=function(type,line,command,a,b,c,d){return(cpu_obj.VALIDATION_MSG['LINE'](line)+(cpu_obj.VALIDATION_MSG[type])(line,command,a,b,c,d));};cpu_obj.VALIDATION_DIC={'ADD':['MMM','MMI','MIM','MII'],'SUB':['MMM','MMI','MIM','MII'],'MUL':['MMM','MMI','MIM','MII'],'AND':['MMM','MMI','MIM','MII'],'OR':['MMM','MMI','MIM','MII'],'NEG':['MM','MI'],'JMP':['M','I'],'JMPZ':['MM','MI','IM','II'],'JMPN':['MM','MI','IM','II'],'CMP':['MMM','MMI','MIM','MII'],'MOVE':['MM','MI','IM','II'],'WAIT':['M','I'],'UNLOCK':['M','I'],'READ':['M'],};cpu_obj.classify_args=function(parts){let res='';for(p in parts){if(is_mem_ptr(parts[p]))
+res+='M';else if(is_double_mem_ptr(parts[p]))
+res+='M';else if(is_num(parts[p]))
+res+='I';else{return-1;}}
+return res;}
+cpu_obj.validate_asm=function(asm_code){for(let i=0;i<asm_code.length;i++){let parts=asm_code[i].split(' ');let rem=[];for(let i in parts)
+if(parts[i]!='')rem.push(parts[i]);if(rem.length==0)
+continue;let command=rem.shift();if(cpu_obj.VALIDATION_DIC.hasOwnProperty(command)){let arg_types=cpu_obj.classify_args(rem);if(arg_types==-1){return cpu_obj.validation_err('INV_ARGS',i,rem.join(' '));}else if(cpu_obj.VALIDATION_DIC[command].lastIndexOf(arg_types)==-1){return cpu_obj.validation_err('BAD_ARGS',i,command,rem.join(' '),arg_types);}else{}}else{return cpu_obj.validation_err('UNKNOWN_CMD',i,command);}}
+return true;}
+cpu_obj.partition=function(line){let parts=line.split(' ');let rem=[];for(let i in parts)
+if(parts[i]!='')rem.push(parts[i]);return rem;}
+cpu_obj.reset=function(){let o=cpu_obj;o.asm_code=[];o.cur_line=0;o.registers=[0,0,0,0,0,0,0,0];o.wait_cycles=0;o.job_list=[];if(worker_obj.rem_trials!=worker_obj.TOTAL_TRIALS){o.WAIT_INTERVAL=o.WAIT_INTERVAL_ULTRA_FAST;game_scene_obj.WAIT_INTERVAL=game_scene_obj.WAIT_INTERVAL_ULTRA_FAST;}else{o.cycles_sum=0;o.WAIT_INTERVAL=o.WAIT_INTERVAL_SLOW;game_scene_obj.WAIT_INTERVAL=game_scene_obj.WAIT_INTERVAL_SLOW;}
+o.halt=false;o.cycles=0;if(o.repeat_timer!=null)
+o.repeat_timer.timer.removeAll();console.log('cpu reset');}
+cpu_obj.begin_proces_asm=function(asm_code){let o=cpu_obj;game_screen_obj.load_level_data(game_scene_obj.cur_level);o.reset();o.asm_code=asm_code;o.process_asm();}
+cpu_obj.get_mem_addr=function(arg){if(is_mem_ptr(arg))
+return parseInt(arg.slice(1,-1));else if(is_double_mem_ptr(arg))
+return cpu_obj.registers[parseInt(arg.slice(2,-2))];}
+cpu_obj.resolve_value=function(arg){if(is_num(arg))
+return{value:parseInt(arg)};else if(is_mem_ptr(arg)){let a=parseInt(arg.slice(1,-1));if(a>=0&&a<=7)
+return{value:cpu_obj.registers[a]};else
+return{error:true};}
+else if(is_double_mem_ptr(arg)){let a=parseInt(arg.slice(2,-2));if(a>=0&&a<=7&&cpu_obj.registers[a]>=0&&cpu_obj.registers[a]<=7)
+return{value:cpu_obj.registers[cpu_obj.registers[a]]};else
+return{error:true};}
+else
+return{error:true};}
+cpu_obj.EXECUTION_STOPPED_MSG='\nexecution stopped';cpu_obj.process_asm=function(){let o=cpu_obj;if(o.halt)
+return;if((o.cur_line>=asm_editor_obj.NO_LINES||o.cur_line<0)&&o.job_list.length==0){game_scene_obj.create_popup(o.VALIDATION_MSG['LINE'](o.cur_line)+'line out of bounds'+o.EXECUTION_STOPPED_MSG);return;}
+o.extra_cycles=1;o.cycles+=1;let res={};if(o.job_list.length==0){let line=o.asm_code[o.cur_line];let parts=o.partition(line);let parts_r=[];for(let i=1;i<parts.length;i++){let r=o.resolve_value(parts[i]);if(r.error){game_scene_obj.create_popup(o.VALIDATION_MSG['LINE'](o.cur_line)+'incorrect argument value: \''+parts[i]+'\''+o.EXECUTION_STOPPED_MSG);return;}else
+parts_r.push(r.value);}
+if(parts[0]=='MOVE'){res=worker_obj.move(parts_r[0],parts_r[1]);}else if(parts[0]=='WAIT'){res=worker_obj.wait(parts_r[0])}else if(parts[0]=='ADD'){res=worker_obj.add(o.get_mem_addr(parts[1]),parts_r[1],parts_r[2]);}else if(parts[0]=='CMP'){res=worker_obj.cmp(o.get_mem_addr(parts[1]),parts_r[1],parts_r[2]);}else if(parts[0]=='SUB'){res=worker_obj.sub(o.get_mem_addr(parts[1]),parts_r[1],parts_r[2]);}else if(parts[0]=='MUL'){res=worker_obj.mul(o.get_mem_addr(parts[1]),parts_r[1],parts_r[2]);}else if(parts[0]=='JMP'){res=worker_obj.jmp(parts_r[0]);}else if(parts[0]=='JMPZ'){res=worker_obj.jmpz(parts_r[0],parts_r[1]);}else if(parts[0]=='JMPN'){res=worker_obj.jmpn(parts_r[0],parts_r[1]);}else if(parts[0]=='UNLOCK'){res=worker_obj.unlock(parts_r[0]);}else if(parts[0]=='READ'){res=worker_obj.read(o.get_mem_addr(parts[1]));}}else{let job=o.job_list.shift();if(job.name=='WAIT'){console.log('real waiting');}else if(job.name=='MOVE'){if(job.y!=0&&!game_screen_obj.check_collision(game_screen_obj.entities.player.x,game_screen_obj.entities.player.y+job.y)){game_screen_obj.entities.player.y+=job.y;cpu_obj.registers[7]+=1;}else if(job.x!=0&&!game_screen_obj.check_collision(game_screen_obj.entities.player.x+job.x,game_screen_obj.entities.player.y)){game_screen_obj.entities.player.x+=job.x;cpu_obj.registers[7]+=1;}else{while(o.job_list.length!=0&&o.job_list[0].name=='MOVE'){o.cycles+=1;o.extra_cycles+=1;o.job_list.shift();}}
+worker_obj.check_activation();}
+res.next_line=o.cur_line;}
+o.cycles=min(9998,o.cycles);if(!res.error){o.repeat_timer=game.time.events.add(o.WAIT_INTERVAL,cpu_obj.process_asm,o);if(typeof(res.next_line)=='undefined')
+o.cur_line+=1;else
+o.cur_line=res.next_line;}else{game_scene_obj.create_popup(o.VALIDATION_MSG['LINE'](o.cur_line)+res.error_msg+o.EXECUTION_STOPPED_MSG);return;}
+game_screen_obj.redraw();game_scene_obj.redraw_registers();game_scene_obj.redraw_arrow();game_scene_obj.show_cpu_tick(o.extra_cycles);}</script><script type="text/javascript">var worker_obj={};worker_obj.move=function(a,dir){if(dir!=0&&dir!=1)
+return{error:true,error_msg:'direction has to be either 0 or 1 ('+dir+')'};let b=a>0?a:-a;let s=a>0?1:-1;if(dir==0)
+for(;b>0;b--)cpu_obj.job_list.push({name:'MOVE',x:0,y:s});else if(dir==1)
+for(;b>0;b--)cpu_obj.job_list.push({name:'MOVE',x:s,y:0});return true;}
+worker_obj.wait=function(a){if(a<0)
+return{error:true,error_msg:'wait argument can\'t be negative ('+a+')'};for(;a>0;a--)
+cpu_obj.job_list.push({name:'WAIT'});return{};}
+worker_obj.add=function(a,b,c){cpu_obj.registers[a]=b+c;return{};}
+worker_obj.sub=function(a,b,c){cpu_obj.registers[a]=b-c;return{};}
+worker_obj.mul=function(a,b,c){cpu_obj.registers[a]=b*c;return{};}
+worker_obj.cmp=function(a,b,c){if(b>c)
+cpu_obj.registers[a]=1;else if(b<c)
+cpu_obj.registers[a]=-1;else
+cpu_obj.registers[a]=0;return{};}
+worker_obj.jmp=function(addr){if(addr<1||addr>asm_editor_obj.NO_LINES)
+return{error:true,error_msg:'incorrect line number ('+addr+')'};else
+return{next_line:addr-1};}
+worker_obj.jmpz=function(addr,a){if(addr<1||addr>asm_editor_obj.NO_LINES)
+return{error:true,error_msg:'incorrect line number ('+addr+')'};else if(a==0)
+return{next_line:addr-1};else
+return{};}
+worker_obj.jmpn=function(addr,a){if(addr<1||addr>asm_editor_obj.NO_LINES)
+return{error:true,error_msg:'incorrect line number ('+addr+')'};else if(a<0)
+return{next_line:addr-1};else
+return{};}
+worker_obj.check_activation=function(){let px=game_screen_obj.entities.player.x;let py=game_screen_obj.entities.player.y;if(game_screen_obj.grid_data[px][py]=='t'){game_scene_obj.create_popup('You walked into a trap. CPU halt.');}else if(game_screen_obj.grid_data[px][py]=='G'){worker_obj.rem_trials-=1;cpu_obj.cycles_sum+=cpu_obj.cycles;if(worker_obj.rem_trials==0)
+worker_obj.end_level();else{worker_obj.start_run();}}}
+worker_obj.start_run=function(){let validation_msg=(cpu_obj.validate_asm(asm_editor_obj.lines));if(validation_msg!=true){game_scene_obj.create_popup(validation_msg);}else{cpu_obj.cycles_sum+=cpu_obj.cycles;game_scene_obj.show_arrow(true);cpu_obj.begin_proces_asm(asm_editor_obj.lines);game_scene_obj.button_fast.bringToTop();game_scene_obj.button_stop.bringToTop();asm_editor_obj.typing_locked=true;}}
+worker_obj.end_level=function(){cpu_obj.halt=true;score_obj.levels[game_scene_obj.cur_level].solution=asm_editor_obj.lines;let MSG='Let\'s see how well you\'ll do in the next one.';if(game_scene_obj.cur_level==levels_obj.levels.length-1)
+MSG='\nThe game is over. You\'ve successfully learned\nbasic assembly. Enjoy your life.\n'
+else
+score_obj.levels[game_scene_obj.cur_level+1].unlocked=true;if(isNaN(score_obj.levels[game_scene_obj.cur_level].cycles)||score_obj.levels[game_scene_obj.cur_level].cycles==null)
+score_obj.levels[game_scene_obj.cur_level].cycles=999999999;if(isNaN(score_obj.levels[game_scene_obj.cur_level].lines)||score_obj.levels[game_scene_obj.cur_level].lines==null)
+score_obj.levels[game_scene_obj.cur_level].lines=999999999;let prev_lines=score_obj.levels[game_scene_obj.cur_level].lines;score_obj.levels[game_scene_obj.cur_level].lines=0;for(let i in asm_editor_obj.lines)
+if(!asm_editor_obj.lines[i].match(/^[ ]+$/))
+score_obj.levels[game_scene_obj.cur_level].lines+=1;let cycles_avg=Math.floor(cpu_obj.cycles_sum/worker_obj.TOTAL_TRIALS);let res_lines=score_obj.levels[game_scene_obj.cur_level].lines;score_obj.levels[game_scene_obj.cur_level].lines=min(prev_lines,score_obj.levels[game_scene_obj.cur_level].lines);score_obj.levels[game_scene_obj.cur_level].cycles=min(cycles_avg,score_obj.levels[game_scene_obj.cur_level].cycles);score_obj.save_data();game_scene_obj.create_popup('You\'ve beaten this level with '+
+res_lines+' lines and '+
+cycles_avg+' cycles.\n'+MSG,function(){game.state.start('dos_hell');});}
+worker_obj.unlock=function(key){let px=game_screen_obj.entities.player.x;let py=game_screen_obj.entities.player.y;let door=null;for(let i in game_screen_obj.entities){let entity=game_screen_obj.entities[i];if(entity.type=='door'){if((abs(px-entity.x)==1&&py==entity.y)||(abs(py-entity.y)==1&&px==entity.x)){door=entity;break;}}}
+if(door==null){cpu_obj.registers[7]=-1;return{};}else{if(door.key!=key){return{error:true,error_msg:'incorrect key ('+key+'), CPU fault'};}else{door.type='door_unlocked';game_screen_obj.grid_data[door.x][door.y]='d';return{};}}}
+worker_obj.read=function(a){let px=game_screen_obj.entities.player.x;let py=game_screen_obj.entities.player.y;let value=null;for(let i in game_screen_obj.entities){let entity=game_screen_obj.entities[i];if(entity.type=='value'){if(py==entity.y&&px==entity.x){value=entity;break;}}}
+if(value==null){cpu_obj.registers[a]=-1;return{};}else{cpu_obj.registers[a]=value.value;return{};}}</script><script type="text/javascript">var score_obj={levels:{},}
+score_obj.init=function(){score_obj.reset();score_obj.load_data();}
+score_obj.reset=function(){for(let i=0;i<levels_obj.levels.length;i++){score_obj.levels[i.toString()]={'lines':NaN,'cycles':NaN,'solution':[],'unlocked':false};}
+score_obj.levels['0'].unlocked=true;}
+score_obj.load_data=function(){if(typeof(Storage)!=="undefined"){if(localStorage['asm_loaded']=='true'){let ret_data=JSON.parse(localStorage['asm_progress']);if(ret_data.hasOwnProperty(game_obj.SAVE_VERSION)&&Object.keys(ret_data[game_obj.SAVE_VERSION]).length==levels_obj.levels.length){score_obj.levels=ret_data[game_obj.SAVE_VERSION];console.log('game data loaded');}}}else{console.log('game data will be lost on game exit');}}
+Number.prototype.pad=function(size){var s=String(this);if(isNaN(this))
+while(s.length<(size||2)){s=s+" ";}
+else
+while(s.length<(size||2)){s=s+" ";}
+return s;}
+score_obj.save_data=function(){if(typeof(Storage)!=="undefined"){let to_save={};if(localStorage['asm_loaded']=='true')
+to_save=JSON.parse(localStorage['asm_progress']);to_save[game_obj.SAVE_VERSION]=score_obj.levels;localStorage.setItem('asm_progress',JSON.stringify(to_save));localStorage.setItem('asm_loaded',true);console.log('game data saved');}else{console.log('game data not saved');}}
+score_obj.get_progress=function(){res='level        cycles            lines\n';for(let i in score_obj.levels){res+=parseInt(i).pad(2)+' '+(score_obj.levels[i].unlocked?' ':'X')+'         '+parseInt(score_obj.levels[i].cycles).pad(6)
++'            '+parseInt(score_obj.levels[i].lines).pad(3)+'\n';}
+return res.slice(0,-1);}</script><script type="text/javascript">var levels_obj={levels:[function(){return{map:["........................","........................","........................","........................","........................",".........wwwwwww........",".........w....Gw........",".........w....ww........",".........w.wwww.........",".........w.w............",".........wPw............",".........www............","........................","........................","........................","........................","........................"],entities:{},solution:["MOVE -3 0"]}},function(){return{map:["wwwwwwwwwwwwwwwwwwwwwwww","wP.....................w","wwwwwwwwwwwwwwwwwwwwww.w","w..w......w..........w.w","w..w.ww.w...wwwww.w.ww.w","w.....w...ww....www....w","w.ww..w...w..wG.wwwww.ww","w...w.w...w..w..w...w..w","w...w.w.wwww.www....ww.w","w.....w.w....w..w....w.w","w.wwwww.w.www...ww.www.w","w...w.w.w..w....w......w","w...w.w.ww.w.ww.w.wwww.w","w...w.w..w.w.........w.w","w...w.w..w.wwwwwwwwwww.w","w......................w","wwwwwwwwwwwwwwwwwwwwwwww"],entities:{},solution:["MOVE 21 1","MOVE 4 0"]}},function(){var w={map:["wwwwwwwwwwwwwwwwwwwwwwww","w......................w","w......................w","w................w.....w","w....www........w.ww...w","w...w.P.wwwwwwww.!..w..w","w...w..............w...w","w...ww.............w...w","w.....ww...........w...w","w.......ww......w@ww...w","w.........ww...w...w...w","w...........ww.w.G.w...w","w.............w.www....w","w......................w","w......................w","w......................w","wwwwwwwwwwwwwwwwwwwwwwww"],entities:{"@":{type:"door",key:"17"},"!":{type:"value",value:"17"},"^":{type:"text",text:"Level values change every time you run your program"}},total_trials:3,solution:["","","","READ [5]","MOVE 3 0"]};return w.entities["@"].key=w.entities["!"].value=getRandomIntGame(),w},function(){var w={map:["wwwwwwwwwwwwwwwwwwwww....","w.........P.........w....","w...................w....","w........(.)........w....",".wwwwwwwww@wwwwwwwww..1..","...w.............w.......","...w.............w.......","...w.............w.......","....wwwwww!wwwwww.....2..","........w...w............","........w...w............","........w...w............",".........w#w..........3..",".........w.w.............",".........w.w.............",".........wGw.............","..........w..............","........................."],entities:{"@":{type:"door",key:"17"},"!":{type:"door",key:"17"},"#":{type:"door",key:"17"},1:{type:"text",text:"17"},2:{type:"text",text:"17"},3:{type:"text",text:"17"},"(":{type:"value",value:"17"},")":{type:"value",value:"17"}},total_trials:3,solution:[]},e=getRandomInt(1,10),t=getRandomInt(1,9);return w.entities[")"].value=t,w.entities["("].value=e,w.entities["@"].key=e+t,w.entities[1].text="< "+(e+t).toString(),w.entities["!"].key=e-t,w.entities[2].text="< "+(e-t).toString(),w.entities["#"].key=e*t,w.entities[3].text="< "+(e*t).toString(),w},function(){return{map:[".........wwwwww.........",".........w...Pw.........",".........w.wwww.........",".........w....w.........",".........wwww.w.........",".........w....w.........",".........w.wwww.........",".........w....w.........",".........wwww.w.........",".........w....w.........",".........w.wwww.........",".........w....w.........",".........wwww.w.........",".........w....w.........",".........w.wwww.........",".........w...Gw.........",".........wwwwww........."],entities:{},max_lines:10,solution:["","","JMP 8"]}},function(){var w={map:[".wwwwwwwwwwwwwwwwwwwwww..",".w.t.................w...",".w.wwwwwwwwwwwwwwwwwww...",".w.t...............w.....",".w.wwwwwwwwwwwwwwwww.....",".w.t.............w.......",".w.wwwwwwwwwwwwwww.......",".w.t...........w.........",".w.wwwwwwwwwwwww.........",".w.t.........w...........",".w.wwwwwwwwwww...........",".w.t.......w.............",".w.wwwwwwwww.............",".w.t.....w...............",".w.wwwwwww...............",".w1...Pw.................",".wwwwwww................."],entities:{1:{type:"value",value:17}},solution:[""],total_trials:5},e=getRandomInt(1,7);return console.log(e),w.map[15-2*e]=w.map[15-2*e].replaceAt(3,"."),w.map[15-2*e]=w.map[15-2*e].replaceAt(6+2*e,"G"),w.entities[1].value=e,w},function(){var w={map:[".........wwwww...........","........w..P..w...(......",".......w.......w..)......","......w.........w........",".....w...........w.......","....w.............w......","...w...............w.....","..w........1........w....",".www.www.w...w.www.www...","ww.w.w.wwwwwwwww.w.w.ww..","w.......w.....w...t...w..","w................t.t..w..","w.......w.....w...t...w..","ww.....www...www......w..",".ww...ww.ww.ww.ww...ww...","..wwGww...www...wwtww....","........................."],entities:{1:{type:"value",value:"1"},"(":{type:"text",text:"47 - go left"},")":{type:"text",text:"48 - go right"}},solution:["","","JMPZ 7 [0]"],total_trials:10},e=getRandomInt(0,1);return w.entities[1].value=e+47,1==e&&(w.map[10]=w.map[10].replaceAt(4,"t").replaceAt(18,"."),w.map[11]=w.map[11].replaceAt(5,"t").replaceAt(17,"."),w.map[11]=w.map[11].replaceAt(3,"t").replaceAt(19,"."),w.map[12]=w.map[12].replaceAt(4,"t").replaceAt(18,"."),w.map[15]=w.map[15].replaceAt(4,"t").replaceAt(18,"G")),w},function(){for(var w={map:["..............w...............","............ww.ww.............","............w.2.w.............",".............w.w..............",".............w.w..............",".............w.w..............",".......ww....w.w....ww........",".......w.wwwww.wwwww.w........","......w.1.....P.....3.w.......",".......w.wwwww.wwwww.w........",".......ww....w.w....ww........",".............w#w..............",".^...........w.w..............",".............w.w..............","............w.G.w.............","............ww.ww.............","..............w..............."],entities:{"#":{type:"door",key:"17"},1:{type:"value",value:"17"},2:{type:"value",value:"17"},3:{type:"value",value:"17"},"^":{type:"text",text:"(2a+b*(a-c)^2)*2+3"}},solution:[]},e=999,t=999,n=999;2*(2*e+t*(e-n)*(e-n))+3>99||2*(2*e+t*(e-n)*(e-n))+3<-99;)e=getRandomIntGame(),t=getRandomIntGame(),n=getRandomIntGame();return w.entities[1].value=e,w.entities[2].value=t,w.entities[3].value=n,w.entities["#"].key=2*(2*e+t*(e-n)*(e-n))+3,w},function(){for(var w={map:["...........www.............","..........w...w............",".........w.....w...........","........w...P...w..........",".........w.....w...........","..........w...w............","...........w.w.............","...wwwwwwwww.wwwwwwwww.....","..w.......1...2.......w....","...wwwwwwwww#wwwwwwwww.....","...........w.w.............","..........w...w............",".........w.....w...........","........w...G...w..........",".........w.....w...........","..........w...w............","...........www............."],entities:{"#":{type:"door",key:"17"},1:{type:"value",value:"17"},2:{type:"value",value:"17"}},solution:[""],total_trials:5},e=getRandomInt(2,90),t=getRandomInt(2,90);e*t>GAME_MAX_INT||t>GAME_MAX_INT;)e=getRandomInt(2,90),t=getRandomInt(2,90);return w.entities[1].value=e*t,w.entities[2].value=t,w.entities["#"].key=e,w},function(){for(var w={map:[".......wwwwwwwwwwwww........",".w.....w...........w.....w..","ww.....w..w..P..w..w.....ww.",".ww....w...........w....ww..","..ww...wwwwww1wwwwww...ww...","...ww.......w#w.......ww....","....ww..wwwww.wwwww..ww.....",".....wwww......2..wwww......",".......wwwwwwww@wwww........","........w......3..w.........","........wwwwwww!www.........","........w......G..w.........","........wwwwwwwwwww.........","..........w.....w...........","..........w.....w...........","..........w.....w..%........",".........ww....ww..........."],entities:{"@":{type:"door",key:"17"},"!":{type:"door",key:"17"},"#":{type:"door",key:"17"},1:{type:"value",value:"17"},2:{type:"value",value:"17"},3:{type:"value",value:"17"},"%":{type:"text",text:"2x*x-3x+7"}},solution:[],total_trials:5},e=getRandomIntGame(),t=getRandomIntGame(),n=getRandomIntGame();2*e*e-3*e+7>99||2*e*e-3*e+7<-99;)e=getRandomIntGame();for(;2*t*t-3*t+7>99||2*t*t-3*t+7<-99;)t=getRandomIntGame();for(;2*n*n-3*n+7>99||2*n*n-3*n+7<-99;)n=getRandomIntGame();return w.entities[1].value=e,w.entities[2].value=t,w.entities[3].value=n,w.entities["#"].key=2*e*e-3*e+7,w.entities["@"].key=2*t*t-3*t+7,w.entities["!"].key=2*n*n-3*n+7,w},function(){var w={map:["........................","........................","........................",".................www....","................ww.ww...","...............ww...ww..","..............ww.....ww.",".wwwwwwwwwwwwwww......w.",".wP...........6#..G...w.","..ww0123www4.5ww.....ww.","...www.ww.wwww.ww...ww..",".....www...w.w..ww.ww...",".................www....","........................","........................","........................","........................"],entities:{"#":{type:"door",key:"17"},0:{type:"value",value:"17"},1:{type:"value",value:"17"},2:{type:"value",value:"17"},3:{type:"value",value:"17"},4:{type:"value",value:"17"},5:{type:"value",value:"17"},6:{type:"value",value:"17"}},solution:[],total_trials:5};return w.entities[0].value=getRandomIntGame(),w.entities[1].value=getRandomIntGame(),w.entities[2].value=getRandomIntGame(),w.entities[3].value=getRandomIntGame(),w.entities[4].value=getRandomIntGame(),w.entities[5].value=getRandomIntGame(),w.entities[6].value=getRandomInt(0,5),w.entities["#"].key=w.entities[w.entities[6].value.toString()].value,w},function(){var w={map:["..........................","..........................","..........................","..........................",".......t........t.........",".......t........t.........","..........................","..........................","..........................","..........................","..w..................w....",".wGw................wtw...",".w#wwwwwwwwwwwwwwwwww.w...",".wP...................w...","..wwwwwwwwwwwwwwwwwwww....","..........................","..........................",".........................."],solution:[],entities:{"#":{type:"door",key:"17"}}},e=getRandomInt(0,18);return w.map[13]=w.map[13].replaceAt(3+e,"w"),console.log(e),w.entities["#"].key=e,w},function(){var w={map:["..........................","..........................","..%.......................","..........................","..........................","..........................","...........w...............","..........wPw..............",".........wt1Gw.............","..........www..............","..........................","..........................","..........................","..........................","..........................","..........................",".........................."],entities:{"%":{type:"text",text:"go right if the number is prime,\nleft otherwise"},1:{type:"value",value:"17"}},solution:[""],total_trials:5},e=getRandomInt(2,GAME_MAX_INT/2);if(0==getRandomInt(0,4))for(;!isPrime(e);)e=getRandomInt(2,GAME_MAX_INT/2);return w.entities[1].value=e,isPrime(e)||(w.map[8]=w.map[8].replaceAt(10,"G").replaceAt(12,"t")),w}],popup:["Get to the ladder as fast as you can\nIn this level it is recommended to use the \ninstruction 'MOVE A1 A2'\n   A1 is the amount of steps (can be negative)\n   A2 is the direction \n    (1 for horizontal, 0 for vertical) \nSee the example. Write your code.\nClick `RUN`. Cry. Debug. Succeed.","Practice. It's all about the direction","Sometimes your goal is locked behind a door.\nRecommended instructions: 'UNLOCK A1', 'READ A2'\n   A1 is the key for the door\n     (door must be adjacent to use UNLOCK)\n   M1 stores the loaded value\n     (you must be standing on the tile to use READ) \nWarning: each door gives you only one attempt to\nunlocking it. Brute force will result in CPU halt.","After you've loaded some values into registers\nyou can do arithmetic operations on them, such as\nADD M1 A1 A2 (this stores the result of A1+A2 to \nregister M1).\nOther operations are: SUB, MUL","Sometimes you can't script everything. Use\nthe instruction 'JMP A1' to automate your walk.\n   A1 is line in code to be jumped to\n","Remember, to get a memory value from a register\nuse eg. [4]","It's time for branching!\nJMPZ A1 A2\tjump to line A1 if A2 is zero\nJMPN A1 A2\tjump to line A1 if A2 is negative","Elementary arithmetics..\nTake a,b,c clockwise starting from 9'o clock","You must have noticed that division was missing.\nImplement it. Here's the last instruction:\n\nCMP M1 A1 A2\nM1 stores the result of A1 > A2\nA1 > A2: 1, A1 = A2: 0, A1 < A2: -1","Ever heard of function calls?\nTry to be spacially modest with your code","The number just before the door indicates which\nloaded value to use.\n\nThis calls for double dereference. If, for example\nthe second register contains number 3 and the third\nregister contains 54, then [[2]] evaluates to 54.","Every step you make increments the seventh register.\nThe key in this layer is the amount of steps you\ntill you hit a wall.","This is it: the last layer, the greatest challenge.\n"]};</script><script type="text/javascript">var asm_editor_obj={lines:[],text:[],NO_SCREEN_LINES:22,NO_LINES:0,NO_CHARS:18,cursor_pos_x:0,cursor_pos_y:0,CURSOR_CONST:'_',typing_locked:false,}
+asm_editor_obj.create=function(){if(this.NO_LINES==0)
+this.NO_LINES=this.NO_SCREEN_LINES;if(levels_obj.levels[game_scene_obj.cur_level]().max_lines!=undefined)
+this.NO_LINES=levels_obj.levels[game_scene_obj.cur_level]().max_lines;else
+this.NO_LINES=this.NO_SCREEN_LINES;this.group=game.add.group();this.text=[];this.lines=[];this.cursor_pos_x=this.cursor_pos_y=0;for(let i=0;i<this.NO_LINES;i++){let t=factory_obj.create_text(game,0,10+22*i,'  ',STYLES.asm_editor);let li=factory_obj.create_text(game,-15,13+22*i,pad(i+1,2)+':',STYLES.asm_editor);li.scale.set(0.5,0.35);this.group.add(t);this.group.add(li);this.text.push(t);this.lines.push(' ');}
+this.group.position.x=25;this.group.position.y=-2;this.cursor_text=factory_obj.create_text(game,12,13,this.CURSOR_CONST,STYLES.asm_editor);this.group.add(this.cursor_text);this.cursor_timer=game.time.create(false);this.cursor_timer.loop(doshell_obj.CURSOR_INTERVAL,this.switch_cursor,this);this.cursor_timer.start();this.cursors=game.input.keyboard.createCursorKeys();}
+asm_editor_obj.switch_cursor=function(){let o=asm_editor_obj;if(o.cursor_text.text==o.CURSOR_CONST){o.cursor_text.text=' ';}else{o.cursor_text.text=o.CURSOR_CONST;}}
+asm_editor_obj.onPressCallback=function(key,ev){if(asm_editor_obj.typing_locked)return;if(key.match(/^[A-Za-z0-9/ ;?!-\[\]]+$/)){let o=asm_editor_obj;if(o.lines[o.cursor_pos_y].length>=o.NO_CHARS)return;o.lines[o.cursor_pos_y]=o.lines[o.cursor_pos_y].substr(0,o.cursor_pos_x)+key.toUpperCase()+o.lines[o.cursor_pos_y].substr(o.cursor_pos_x);o.cursor_pos_x++;o.redraw_line(o.cursor_pos_y);}}
+asm_editor_obj.onDownCallback=function(ev){let o=asm_editor_obj;if(o.typing_locked)return;if(o.cursors.up.justDown){o.try_move_cursor(0);}else if(o.cursors.right.justDown){o.try_move_cursor(1);}else if(o.cursors.down.justDown){o.try_move_cursor(2);}else if(o.cursors.left.justDown){o.try_move_cursor(3);}else if(ev.key=='Backspace'){if(o.cursor_pos_x>0){o.lines[o.cursor_pos_y]=o.lines[o.cursor_pos_y].substr(0,o.cursor_pos_x-1)+o.lines[o.cursor_pos_y].substr(o.cursor_pos_x);o.cursor_pos_x--;o.redraw();}else if(o.cursor_pos_y>0&&(o.lines[o.cursor_pos_y].length+o.lines[o.cursor_pos_y-1].length)<=o.NO_CHARS+1){o.cursor_pos_x=o.lines[o.cursor_pos_y-1].length-1;o.lines[o.cursor_pos_y-1]=o.lines[o.cursor_pos_y-1].slice(0,-1)+o.lines[o.cursor_pos_y];o.lines.splice(o.cursor_pos_y,1);o.cursor_pos_y--;o.lines.push(' ');o.redraw();}else
+beep(0);}else if(ev.key=='Delete'){if(o.cursor_pos_x<o.lines[o.cursor_pos_y].length-1){o.lines[o.cursor_pos_y]=o.lines[o.cursor_pos_y].substr(0,o.cursor_pos_x)+o.lines[o.cursor_pos_y].substr(o.cursor_pos_x+1);o.redraw();}else if(o.cursor_pos_y<o.NO_LINES&&(o.lines[o.cursor_pos_y].length+o.lines[o.cursor_pos_y+1].length)<o.NO_CHARS){o.lines[o.cursor_pos_y]=o.lines[o.cursor_pos_y].slice(0,-1)+o.lines[o.cursor_pos_y+1];o.lines.splice(o.cursor_pos_y+1,1);o.lines.push(' ');o.redraw();}else
+beep(0);}else if(ev.key=='Enter'){if(o.cursor_pos_y==o.NO_LINES-1)beep(0);else if(o.lines[o.NO_LINES-1].match("^[ ]$")==null)beep(0);else{o.lines.splice(o.cursor_pos_y+1,0,o.lines[o.cursor_pos_y].substr(o.cursor_pos_x,o.lines[o.cursor_pos_y].length));o.lines[o.cursor_pos_y]=o.lines[o.cursor_pos_y].substr(0,o.cursor_pos_x);o.cursor_pos_x=0;o.lines[o.cursor_pos_y]+=' ';o.cursor_pos_y+=1;o.redraw();}}
+ev.bubbles=false;}
+asm_editor_obj.try_move_cursor=function(dir){let o=asm_editor_obj;o.cursor_prev_pos_x=o.cursor_pos_x;o.cursor_prev_pos_y=o.cursor_pos_y;switch(dir){case 0:if(o.cursor_pos_y>0){o.cursor_pos_y-=1;o.cursor_pos_x=min(o.cursor_pos_x,o.lines[o.cursor_pos_y].length-1);}else
+beep(0);break;case 2:if(o.cursor_pos_y<o.NO_LINES-1){o.cursor_pos_y+=1;o.cursor_pos_x=min(o.cursor_pos_x,o.lines[o.cursor_pos_y].length-1);}else
+beep(0);break;case 3:if(o.cursor_pos_x>0){o.cursor_pos_x--;}else
+beep(0);break;case 1:if(o.cursor_pos_x<o.lines[o.cursor_pos_y].length&&o.cursor_pos_x<o.NO_CHARS-1){o.cursor_pos_x++;}else
+beep(0);break;default:{}}
+o.redraw();}
+asm_editor_obj.calibrate_cursor=function(){let o=asm_editor_obj;o.cursor_text.position.x=o.cursor_pos_x*12+12;o.cursor_text.position.y=o.cursor_pos_y*22+13;}
+asm_editor_obj.redraw_line=function(l){if(asm_editor_obj.cursor_pos_x<0)
+asm_editor_obj.cursor_pos_x=0;asm_editor_obj.calibrate_cursor();asm_editor_obj.text[l].text=' '+asm_editor_obj.lines[l];}
+asm_editor_obj.redraw=function(text){if(asm_editor_obj.cursor_pos_x<0)
+asm_editor_obj.cursor_pos_x=0;asm_editor_obj.calibrate_cursor();for(let i=0;i<this.NO_LINES;i++)
+asm_editor_obj.text[i].text=' '+asm_editor_obj.lines[i];}</script><script type="text/javascript">var game_scene_obj={cur_level:1,CPU_TICK_INTERVAL:90,CPU_TICK_INTERVAL_SLOW:90,CPU_TICK_INTERVAL_ULTRA_FAST:50,}
+game_scene_obj.create=function(a){cpu_obj.reset();var o=game_scene_obj;o.background=game.add.sprite(0,0,'game_background');o.background.scale.set(2,2);game_screen_obj.create(o.cur_level);asm_editor_obj.create();game.input.keyboard.onPressCallback=asm_editor_obj.onPressCallback;game.input.keyboard.onDownCallback=asm_editor_obj.onDownCallback;score_obj.load_data();if(!allEmpty(score_obj.levels[o.cur_level].solution)){asm_editor_obj.lines=score_obj.levels[o.cur_level].solution;asm_editor_obj.redraw();}else{asm_editor_obj.lines=padEmptyLines(levels_obj.levels[o.cur_level]().solution,22,1);asm_editor_obj.redraw();}
+o.button_fast=game.add.button(279,30,'button_fast',function(){game_scene_obj.button_slow.bringToTop();cpu_obj.WAIT_INTERVAL=cpu_obj.WAIT_INTERVAL_FAST;},o,0,0,0);o.button_fast.scale.set(2,2);o.button_slow=game.add.button(279,30,'button_slow',function(){game_scene_obj.button_fast.bringToTop();cpu_obj.WAIT_INTERVAL=cpu_obj.WAIT_INTERVAL_SLOW;},o,0,0,0);o.button_slow.scale.set(2,2);o.button_stop=game.add.button(279,4,'button_stop',function(){o.stop_executing();},o,0,0,0);o.button_stop.scale.set(2,2);o.button_back=game.add.button(279,4,'button_back',function(){score_obj.levels[game_scene_obj.cur_level].solution=asm_editor_obj.lines;score_obj.save_data();game.state.start('dos_hell');},o,0,0,0);o.button_back.scale.set(2,2);o.button_run=game.add.button(279,30,'button_run',function(){worker_obj.rem_trials=worker_obj.TOTAL_TRIALS;worker_obj.start_run();},o,0,0,0);o.button_run.scale.set(2,2);let label_text=factory_obj.create_text(game,521,6,' 0  1  2  3  4  5  6  7',STYLES.game_mem);label_text.smoothed=false;label_text.scale.set(.5,.3);o.sgn_reg_text=factory_obj.create_text(game,511,20,'      ',STYLES.game_mem);o.sgn_reg_text.smoothed=false;o.sgn_reg_text.scale.set(.5,.4);o.reg_text=factory_obj.create_text(game,521,30,'00 00 00 00 00 00 00 00',STYLES.game_mem);o.reg_text.smoothed=false;o.reg_text.scale.set(.5,.3);o.line_arrow=factory_obj.create_text(game,255,7,'<',STYLES.line_arrow);o.line_arrow.smoothed=false;o.line_arrow.scale.set(.5,.3);o.cpu_tick=factory_obj.create_text(game,372,6,'!',STYLES.line_arrow)
+o.cpu_tick.smoothed=false;o.cpu_tick.scale.set(.5,.3);o.cpu_tick.alpha=0;o.redraw_registers();o.create_popup(levels_obj.popup[o.cur_level]);}
+game_scene_obj.redraw_registers=function(){game_scene_obj.reg_text.text='';game_scene_obj.sgn_reg_text.text='';for(let i=0;i<8;i++){if(cpu_obj.registers[i]>99)cpu_obj.registers[i]=99;if(cpu_obj.registers[i]<-99)cpu_obj.registers[i]=-99;game_scene_obj.reg_text.text+=pad(abs(cpu_obj.registers[i]),2)+' ';game_scene_obj.sgn_reg_text.text+=(cpu_obj.registers[i]>=0?' ':'-')+'  ';}}
+game_scene_obj.redraw_arrow=function(){let real_line=cpu_obj.cur_line;if(cpu_obj.job_list.length!=0)
+real_line-=1;game_scene_obj.line_arrow.position.set(255,real_line*21+7);}
+game_scene_obj.show_cpu_tick=function(text){game_scene_obj.cpu_tick.alpha=1;game_scene_obj.cpu_tick.text=text;let tmr=game.time.create(false);tmr.add(game_scene_obj.CPU_TICK_INTERVAL,function(){game_scene_obj.cpu_tick.alpha=0;},this);tmr.start();}
+game_scene_obj.show_arrow=function(show){}
+game_scene_obj.stop_executing=function(){game_scene_obj.show_arrow(false);game_scene_obj.button_run.bringToTop();game_scene_obj.button_back.bringToTop();asm_editor_obj.typing_locked=false;cpu_obj.halt=true;}
+game_scene_obj.create_popup=function(text,f){var o=game_scene_obj;o.stop_executing();o.popup_fun=f;asm_editor_obj.typing_locked=true;o.popup_group=game.add.group();o.popup=game.add.button(0,0,'game_popup',function(){},o,0,0,0);o.popup.scale.set(2,2);o.popup.input.useHandCursor=false;o.popup_group.add(o.popup);o.popup_button=game.add.button(415,342,'button_ok',function(){game.world.remove(game_scene_obj.popup_group,true);asm_editor_obj.typing_locked=false;game_scene_obj.button_back.bringToTop();game_scene_obj.button_run.bringToTop();if(typeof(o.popup_fun)!='undefined')o.popup_fun();},o,0,0,0);o.popup_button.scale.set(2,2);o.popup_group.add(o.popup_button);o.popup_text=factory_obj.create_text(game,130,130,text,STYLES.asm_editor);o.popup_group.add(o.popup_text);}</script><script type="text/javascript">var game_screen_obj={grid_data:[],grid_buff:[],frame_map:{'.':0,'P':1,'r':2,'w':3,'G':4,'D':5,'d':6,'t':7,},entities_dic_map:{'door':'D','value':'V','trap':'t','text':'.',},group:null,tmp_group:null,WIDTH:24,HEIGHT:17,entities:{'player':{x:0,y:0},'enemies':[],}};game_screen_obj.create=function(level){let o=game_screen_obj;o.group=game.add.group();o.group.position.set(287,66);o.grid_data=[];o.grid_buff=[];for(let i=0;i<o.WIDTH;i++){o.grid_buff.push([]);for(let j=0;j<o.HEIGHT;j++){let obj=o.group.create(25*i,25*j,'game_sprites');obj.frame=0;o.grid_buff[i].push(obj);}}
+o.load_level_data(level);}
+game_screen_obj.load_level_data=function(level){let o=game_screen_obj;o.grid_data=[];o.entities={'player':{x:0,y:0},'enemies':[],};if(o.tmp_group!=null)o.tmp_group.removeAll();o.tmp_group=game.add.group();o.tmp_group.position.set(287,68);let source=levels_obj.levels[level]();if(source.hasOwnProperty('max_lines'))
+asm_editor_obj.NO_LINES=source['max_lines'];if(source.hasOwnProperty('total_trials'))
+worker_obj.TOTAL_TRIALS=source['total_trials'];else
+worker_obj.TOTAL_TRIALS=1;let s_map=source.map;let s_entities=source.entities;for(let i=0;i<o.WIDTH;i++){o.grid_data.push([]);for(let j=0;j<o.HEIGHT;j++){o.grid_data[i].push(s_map[j][i]);if(s_map[j][i]=='P'){o.entities.player={x:i,y:j};o.grid_data[i][j]='.';}else if(s_entities.hasOwnProperty(o.grid_data[i][j])){let entity=s_entities[o.grid_data[i][j]];o.grid_data[i][j]=o.entities_dic_map[entity.type];entity.x=i;entity.y=j;if(entity.type=='text'){let text=factory_obj.create_text(game,i*25,j*25,entity.text,STYLES.game_screen_text);text.smoothed=false;o.tmp_group.add(text);}else if(entity.type=='value'){let text=factory_obj.create_text(game,i*25+2,j*25,entity.value,STYLES.game_screen_text);text.smoothed=false;o.tmp_group.add(text);o.entities['e'+i.toString()+'.'+j.toString()]=entity;o.grid_data[i][j]='.';}else{o.entities['e'+i.toString()+'.'+j.toString()]=entity;}}}}
+o.redraw();}
+game_screen_obj.redraw=function(){let o=game_screen_obj;for(let i=0;i<o.WIDTH;i++)
+for(let j=0;j<o.HEIGHT;j++)
+if(o.grid_data[i][j]!='V')
+o.grid_buff[i][j].frame=o.frame_map[o.grid_data[i][j]];o.grid_buff[o.entities.player.x][o.entities.player.y].frame=o.frame_map['P'];}
+game_screen_obj.check_collision=function(x,y){let o=game_screen_obj;if(x<0||y<0||x>=o.WIDTH||y>=o.HEIGHT)
+return true;else if(o.grid_data[x][y]=='w'||o.grid_data[x][y]=='D')
+return true;return false;}</script></head>
+
+
+
+
+
+
+
+<body style="background-color: #1D1F20">
+<div id="center_div">
+<span class="main_title">A Small Maniac's Game</span>
+<span class="subtitle" style="position: relative; left: 150px;">A game that zh3r0 guys asked for 😥</span>
+<div id="game" style="margin-top: 10px;"><canvas style="display: block; touch-action: none; user-select: none; width: 900px; height: 500px;" width="900" height="500"></canvas></div>
+<script type="text/javascript" src="Hell_files/game.js"></script>
+</div>
+<input type="button" name="submit_testcase" value="Submit All Solution" onclick="check_solution();">
+
+<script type="text/javascript">
+  function check_solution()
+  {
+    var data = localStorage.getItem('asm_progress');
+    var http = new XMLHttpRequest();
+    var url = 'submit'; //server
+    var params = data;
+    http.open('POST', url, true);
+    
+    //Send the proper header information along with the request
+    http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    
+    http.onreadystatechange = function()
+    {//Call a function when the state changes.
+        if(http.readyState == 4 && http.status == 200)
+        {
+            document.write(http.responseText);
+        }
+    }
+    alert('the server might take upto 40 seconds to validate the solution :)');
+    http.send(params);
+  }
+</script>
+
+</body></html>
